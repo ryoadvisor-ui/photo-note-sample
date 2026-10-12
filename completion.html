@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="竣工写真を固定A4様式へまとめる写真帳">
+  <title>竣工写真帳</title>
+  <link rel="stylesheet" href="completion.css?v=2.1.5">
+  <link rel="stylesheet" href="photo-editor.css?v=1.1.0">
+  <link rel="stylesheet" href="business-manager.css?v=1.4.0">
+  <link rel="stylesheet" href="app-dialog.css?v=1.0.0">
+  <link rel="stylesheet" href="zoom-control.css?v=1.0.0">
+  <link rel="stylesheet" href="office-export.css?v=1.1.0">
+  <link rel="stylesheet" href="sidebar.css?v=1.0.0">
+  <link rel="stylesheet" href="web-license-lock.css?v=1.0.0">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html"><span class="brand-mark">写</span><span>官公庁写真帳</span></a>
+  </header>
+  <nav class="actions right-sidebar" aria-label="操作">
+      <div id="businessSwitcher"></div>
+      <a class="button" href="cover.html">表紙ページ</a>
+      <a class="button" href="index.html">施工写真ページ</a>
+      <a class="button page-current" href="completion.html" aria-current="page">竣工写真ページ</a>
+      <div class="sidebar-divider" aria-hidden="true"></div>
+      <button id="saveButton" class="button" type="button">事業所JSON保存</button>
+      <label class="button file-button">事業所JSON読込<input id="loadInput" type="file" accept="application/json,.json" hidden></label>
+      <button id="printButton" class="button" type="button">印刷見本</button>
+      <div class="sidebar-divider" aria-hidden="true"></div>
+      <button id="resetButton" class="button danger-ghost" type="button">初期化</button>
+      <button id="resetAllButton" class="button danger-ghost" type="button">全ページ初期化</button>
+      <span class="save-status"><span class="save-indicator"></span><span id="saveStatus">この端末に自動保存します</span></span>
+  </nav>
+  <nav class="left-tools" aria-label="表示と追加">
+    <button id="completionViewModeButton" class="button side-list-button" type="button">一覧表示</button>
+    <button id="addButton" class="button primary add-block-side" type="button" title="写真を複数選択できます">＋ 写真を追加</button>
+    <input id="addPhotoFiles" type="file" accept="image/*" multiple hidden>
+  </nav>
+
+  <main class="shell">
+    <section class="settings compact-settings">
+      <div class="fields">
+        <label><span>印刷左上の様式名</span><input id="formName" type="text" maxlength="80" placeholder="例：〈様式第4号様式その3〉"></label>
+        <label><span>奇数ページの表題</span><input id="oddPageTitle" type="text" maxlength="40" value="竣工写真"></label>
+        <label><span>偶数ページの表題</span><input id="evenPageTitle" type="text" maxlength="40" value="竣工写真"></label>
+        <label><span>見出し文字サイズ <output id="completionTitleFontSizeOutput">14pt</output></span><input id="completionTitleFontSize" type="range" min="9" max="24" step="1" value="14"></label>
+      </div>
+    </section>
+    <section id="emptyState" class="empty-state">
+      <b>写真を追加してください</b>
+      <p>横長写真と同じ幅の3段記録欄が1組で追加されます。</p>
+      <button id="emptyAddButton" class="button primary" type="button">最初の写真を追加</button>
+    </section>
+    <section id="entryList" class="entry-list" aria-label="竣工写真一覧"></section>
+  </main>
+
+  <template id="entryTemplate">
+    <article class="entry" draggable="true">
+      <header class="entry-toolbar">
+        <button class="drag-handle" type="button" title="ドラッグして並べ替え">⠿</button>
+        <b class="entry-number"></b>
+        <span></span>
+        <button class="mini move-up" type="button">↑ 上へ</button>
+        <button class="mini move-down" type="button">↓ 下へ</button>
+        <button class="mini move-first" type="button">最初に移動</button>
+        <button class="mini move-last" type="button">最後に移動</button>
+        <button class="mini duplicate" type="button">複製</button>
+        <button class="mini danger delete" type="button">削除</button>
+      </header>
+      <button class="entry-summary" type="button" title="この竣工写真を通常表示で開く">
+        <span class="entry-summary-image"><img alt="竣工写真のサムネイル" hidden><span>画像なし</span></span>
+        <span class="entry-summary-text"><b></b><small>ドラッグして並べ替え／クリックして編集</small></span>
+      </button>
+      <section class="entry-body">
+        <div class="photo-area">
+          <button class="photo-placeholder" type="button"><strong>＋ 写真を選ぶ</strong><small>JPEG・PNG・WebP</small></button>
+          <img class="photo" alt="選択した竣工写真" hidden>
+          <div class="photo-actions" hidden><button class="mini edit-photo" type="button">写真を加工</button><label class="mini file-button">写真を変更<input class="photo-input" type="file" accept="image/*" hidden></label><button class="mini remove-photo" type="button">写真を外す</button></div>
+        </div>
+        <div class="record-editor" contenteditable="true" hidden></div>
+        <div class="record-fields" aria-label="写真下の上1行・下4行記録欄">
+          <div class="record-top-row">
+            <input class="record-date" type="text" maxlength="40" placeholder="令和　年　月　日">
+            <input class="record-point" type="text" maxlength="12" value="測点" placeholder="測点">
+            <input class="record-location" type="text" maxlength="80" placeholder="撮影場所">
+          </div>
+          <div class="record-summary-auto"></div>
+          <textarea class="record-detail" maxlength="480" rows="4" placeholder="施工内容・確認内容（4行）"></textarea>
+          <select class="record-status" aria-label="写真の状態"><option value="竣 工 前">竣 工 前</option><option value="竣　工" selected>竣　工</option><option value="">　</option></select>
+        </div>
+      </section>
+    </article>
+  </template>
+
+  <dialog id="confirmDialog">
+    <h2>竣工写真帳を初期化しますか？</h2>
+    <p>写真・文章・様式名・自動保存データをすべて削除します。必要であれば先にJSON保存してください。</p>
+    <div class="dialog-actions"><button id="cancelReset" class="button" type="button">キャンセル</button><button id="confirmReset" class="button danger" type="button">初期化する</button></div>
+  </dialog>
+
+  <section id="previewPanel" class="preview-panel" hidden>
+    <header class="preview-toolbar"><div><b>A4印刷見本</b><span>PDFは正常なのに紙が空欄になる場合は、PDF側で「画像として印刷」を選んでください。</span></div><div><button id="closePreview" class="button" type="button">編集へ戻る</button><button id="doPrint" class="button primary" type="button">この内容を印刷</button></div></header>
+    <div id="printBook" class="print-book"></div>
+  </section>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="zoom-control.js?v=1.0.0"></script>
+  <script src="app-dialog.js?v=1.1.0"></script>
+  <script src="business-manager.js?v=1.3.0"></script>
+  <script src="reset-all.js?v=1.1.0"></script>
+  <script src="photo-editor.js?v=1.6.0"></script>
+  <script src="completion.js?v=2.1.0"></script>
+  <script src="office-export.js?v=1.4.1"></script>
+  <script src="web-license-lock.js?v=1.0.0"></script>
+</body>
+</html>

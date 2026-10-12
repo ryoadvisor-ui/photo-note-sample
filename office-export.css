@@ -1,0 +1,11 @@
+.office-export-dialog{width:min(560px,calc(100vw - 28px));border:0;border-radius:16px;padding:0;box-shadow:0 22px 70px #17203355;color:#172033}
+.office-export-dialog::backdrop{background:#17203366;backdrop-filter:blur(2px)}
+.office-export-card{padding:22px}.office-export-card h2{margin:0 0 8px;font-size:1.25rem}.office-export-card>p{margin:0 0 18px;color:#526071;line-height:1.7}
+.office-page-choice{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 10px;padding:12px;border:1px solid #cbd5e1;border-radius:10px}.office-page-choice legend{padding:0 5px;font-weight:700}.office-page-choice label{display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 8px;border:1px solid #ccd5e0;border-radius:8px;background:#fff;font-weight:700;cursor:pointer}.office-page-choice label:has(input:checked){border-color:#3568a8;background:#eaf1f8;color:#1e4f89}.office-page-choice input{width:auto;margin:0}.office-selected-page{margin:0 0 14px;color:#526071;font-size:.93rem}
+.office-export-actions{display:grid;gap:10px}.office-export-actions button{width:100%;text-align:left;padding:13px 15px;border:1px solid #ccd5e0;border-radius:10px;background:#fff;color:#172033;font:inherit;font-weight:700;cursor:pointer}
+.office-export-actions button:hover{border-color:#2d6cdf;background:#f5f8ff}.office-export-actions button.primary{background:#176c46;border-color:#176c46;color:#fff}.office-export-actions small{display:block;margin-top:4px;font-weight:400;line-height:1.45;opacity:.8}
+.office-template-status{margin:14px 0 0;padding:10px 12px;border-radius:9px;background:#f1f4f7;font-size:.9rem}.office-template-status.ready{background:#e7f6ee;color:#176c46}
+.office-export-footer{display:flex;justify-content:flex-end;margin-top:16px}.office-busy{opacity:.55;pointer-events:none}
+.office-export-loader{position:fixed;left:-10px;top:-10px;width:1px;height:1px;opacity:0;pointer-events:none;border:0}
+@media(max-width:700px){.office-export-dialog{width:calc(100vw - 16px)}.office-export-card{padding:17px}.office-page-choice{grid-template-columns:1fr}}
+@media print{#officeExportButton,.office-export-dialog{display:none!important}}

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="工事・点検・施工記録をA4帳票へまとめる官公庁向け写真帳作成アプリ">
+  <title>官公庁写真帳</title>
+  <link rel="stylesheet" href="style.css?v=2.6.4">
+  <link rel="stylesheet" href="photo-editor.css?v=1.1.0">
+  <link rel="stylesheet" href="business-manager.css?v=1.4.0">
+  <link rel="stylesheet" href="app-dialog.css?v=1.0.0">
+  <link rel="stylesheet" href="zoom-control.css?v=1.0.0">
+  <link rel="stylesheet" href="office-export.css?v=1.1.0">
+  <link rel="stylesheet" href="sidebar.css?v=1.0.0">
+  <link rel="stylesheet" href="web-license-lock.css?v=1.0.0">
+</head>
+<body>
+  <header class="topbar">
+    <button id="homeButton" class="brand" type="button" aria-label="先頭へ移動"><span class="brand-mark">公</span><span>官公庁写真帳</span></button>
+  </header>
+  <aside class="top-actions right-sidebar" aria-label="操作">
+      <div id="businessSwitcher"></div>
+      <a class="button page-link" href="cover.html">表紙ページ</a>
+      <a class="button page-link page-current" href="index.html" aria-current="page">施工写真ページ</a>
+      <a class="button page-link" href="completion.html">竣工写真ページ</a>
+      <div class="sidebar-divider" aria-hidden="true"></div>
+      <button id="saveJsonButton" class="button" type="button">事業所JSON保存</button>
+      <label class="button file-button">事業所JSON読込<input id="loadJsonInput" type="file" accept="application/json,.json" hidden></label>
+      <button id="printButton" class="button" type="button">印刷見本</button>
+      <div class="sidebar-divider" aria-hidden="true"></div>
+      <button id="resetButton" class="button danger-ghost" type="button">初期化</button>
+      <button id="resetAllButton" class="button danger-ghost" type="button">全ページ初期化</button>
+      <span class="save-status"><span class="save-indicator" id="saveDot"></span><span id="saveStatus">この端末に自動保存します</span></span>
+  </aside>
+  <nav class="left-tools no-print" aria-label="表示と追加">
+    <button id="viewModeButton" class="button side-list-button" type="button">一覧表示</button>
+    <button id="addBlockButton" class="button primary add-block-side" type="button" title="写真を複数選択できます">＋ ブロック追加</button>
+    <input id="addBlockFiles" type="file" accept="image/*" multiple hidden>
+  </nav>
+
+  <main class="page-shell">
+    <section class="official-settings compact-settings">
+      <label><span>印刷タイトル</span><input id="bookTitle" type="text" maxlength="100" value="工事経過" placeholder="工事経過"></label>
+      <label class="title-font-setting"><span>見出し文字サイズ <output id="titleFontSizeOutput">11pt</output></span><input id="titleFontSize" type="range" min="9" max="24" step="1" value="11"></label>
+      <label><span>最初の3件</span><select id="initialLayout"><option value="text-left">左：文章／右：写真</option><option value="image-left">左：写真／右：文章</option></select></label>
+      <label class="blank-font-setting"><span>「余白」文字サイズ <output id="blankFontSizeOutput">18pt</output></span><input id="blankFontSize" type="range" min="12" max="36" step="1" value="18"></label>
+    </section>
+    <section id="emptyState" class="empty-state" hidden>
+      <div>＋</div><h1>最初のブロックを追加しましょう</h1><p>写真と罫線付き文章を、縦方向へ追加していけます。</p>
+      <button id="emptyAddButton" class="button primary" type="button">ブロックを追加</button>
+    </section>
+    <section id="blockList" class="block-list" aria-label="写真帳ブロック"></section>
+  </main>
+
+  <template id="blockTemplate">
+    <article class="photo-block" draggable="true">
+      <div class="block-toolbar no-print">
+        <button class="drag-handle" type="button" title="ドラッグして入れ替え" aria-label="ドラッグして入れ替え">⠿</button>
+        <span class="block-number"></span>
+        <div class="toolbar-spacer"></div>
+        <button class="mini-button move-up" type="button" aria-label="上へ移動">↑</button>
+        <button class="mini-button move-down" type="button" aria-label="下へ移動">↓</button>
+        <button class="mini-button move-first" type="button">最初に移動</button>
+        <button class="mini-button move-last" type="button">最後に移動</button>
+        <button class="mini-button duplicate-block" type="button">複製</button>
+        <button class="mini-button danger delete-block" type="button">削除</button>
+      </div>
+      <button class="block-summary no-print" type="button" title="この施工写真を通常表示で開く">
+        <span class="summary-image"><img alt="施工写真のサムネイル" hidden><span>画像なし</span></span>
+        <span class="summary-text"><b></b><small>クリックして編集</small></span>
+      </button>
+      <div class="block-content">
+        <section class="text-panel">
+          <input class="block-title" type="text" maxlength="100" tabindex="-1" aria-hidden="true">
+          <div class="cover-work-name-line" aria-label="表紙の工事名"></div>
+          <div class="ruled-editor" role="group" aria-label="罫線入力"></div>
+        </section>
+        <section class="image-panel">
+          <button class="image-placeholder no-print" type="button"><span>＋</span><b>写真を選ぶ</b><small>JPEG・PNG・WebP</small></button>
+          <img class="block-image" alt="選択した写真" hidden>
+          <div class="image-actions no-print" hidden><button class="mini-button edit-image" type="button">写真を加工</button><label class="mini-button file-button">写真を変更<input class="image-input" type="file" accept="image/*" hidden></label><button class="mini-button remove-image" type="button">写真を外す</button></div>
+          <input class="image-caption" type="text" maxlength="140" tabindex="-1" aria-hidden="true">
+        </section>
+      </div>
+    </article>
+  </template>
+
+  <dialog id="addDialog" class="dialog">
+    <div class="dialog-head"><div><span>ブロック追加</span><h2>使用する様式を選ぶ</h2></div><button class="dialog-close" type="button" aria-label="閉じる">×</button></div>
+    <div id="addStyleList" class="style-cards"></div>
+  </dialog>
+
+  <dialog id="styleDialog" class="dialog">
+    <form id="styleForm">
+      <div class="dialog-head"><div><span>独自様式</span><h2>ブロックの様式を作る</h2></div><button class="dialog-close" type="button" aria-label="閉じる">×</button></div>
+      <label>様式名<input id="styleName" type="text" maxlength="60" required placeholder="例：右写真・記録用"></label>
+      <label>配置<select id="styleLayout"><option value="text-left">左に文章・右に写真</option><option value="image-left">左に写真・右に文章</option><option value="image-top">上に写真・下に文章</option><option value="text-only">文章のみ</option><option value="image-only">写真のみ</option></select></label>
+      <label>写真の大きさ <output id="ratioOutput">50%</output><input id="styleRatio" type="range" min="30" max="70" step="5" value="50"></label>
+      <label>写真の表示<select id="styleFit"><option value="cover">枠いっぱいに表示</option><option value="contain">写真全体を表示</option></select></label>
+      <label>ブロックの高さ<select id="styleHeight"><option value="compact">小さめ</option><option value="standard" selected>標準</option><option value="tall">大きめ</option></select></label>
+      <label>見出し色<input id="styleColor" type="color" value="#315f9b"></label>
+      <div class="style-preview" id="stylePreview"><div class="preview-text">罫線付き文章</div><div class="preview-image">写真</div></div>
+      <div class="dialog-actions"><button class="button dialog-close" type="button">キャンセル</button><button class="button primary" type="submit">この様式を保存</button></div>
+    </form>
+    <section class="saved-styles"><h3>保存した独自様式</h3><div id="customStyleList"></div></section>
+  </dialog>
+
+  <dialog id="confirmDialog" class="dialog confirm-dialog">
+    <h2 id="confirmTitle">確認</h2><p id="confirmMessage"></p>
+    <div class="dialog-actions"><button id="confirmCancel" class="button" type="button">キャンセル</button><button id="confirmOk" class="button danger" type="button">実行する</button></div>
+  </dialog>
+
+  <section id="printPreviewPanel" class="print-preview-panel" hidden>
+    <header class="preview-toolbar"><div><b>A4印刷見本</b><span>PDFは正常なのに紙が空欄になる場合は、PDF側で「画像として印刷」を選んでください。</span></div><div><button id="previewCloseButton" class="button" type="button">編集へ戻る</button><button id="previewPrintButton" class="button primary" type="button">この内容を印刷</button></div></header>
+    <section id="printBook" class="print-book" aria-hidden="true"></section>
+  </section>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="zoom-control.js?v=1.0.0"></script>
+  <script src="app-dialog.js?v=1.1.0"></script>
+  <script src="business-manager.js?v=1.3.0"></script>
+  <script src="reset-all.js?v=1.1.0"></script>
+  <script src="photo-editor.js?v=1.6.0"></script>
+  <script src="app.js?v=2.5.0"></script>
+  <script src="office-export.js?v=1.4.1"></script>
+  <script src="web-license-lock.js?v=1.0.0"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+.web-locked-action{
+  border-color:#c89a34!important;
+  background:#fff8e7!important;
+  color:#7a5300!important;
+}
+
+.web-license-badge{
+  display:block;
+  margin:8px 0 0;
+  padding:8px 10px;
+  border:1px solid #e0bd68;
+  border-radius:8px;
+  background:#fff8e7;
+  color:#6d4c00;
+  font-size:12px;
+  line-height:1.45;
+  text-align:center;
+}
+
+#webPrintLockSheet{display:none}
+
+@media print{
+  body>*{display:none!important}
+  #webPrintLockSheet{
+    display:flex!important;
+    position:fixed;
+    inset:0;
+    align-items:center;
+    justify-content:center;
+    padding:24mm;
+    background:#fff;
+    color:#111;
+    font:700 18pt/1.8 sans-serif;
+    text-align:center;
+  }
+}

@@ -1,0 +1,37 @@
+@media screen {
+  body { zoom:var(--app-ui-zoom,1); }
+  .app-zoom-control {
+    position:fixed;
+    z-index:1000;
+    right:12px;
+    bottom:12px;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    min-height:42px;
+    padding:7px 9px;
+    border:1px solid #aeb8c5;
+    border-radius:10px;
+    background:rgba(255,255,255,.97);
+    color:#243246;
+    box-shadow:0 5px 18px rgba(20,32,48,.2);
+    font-family:"Yu Gothic UI","Meiryo",system-ui,sans-serif;
+    font-size:12px;
+    font-weight:800;
+  }
+  .app-zoom-control select {
+    height:30px;
+    margin:0;
+    padding:3px 25px 3px 7px;
+    border:1px solid #aeb8c5;
+    border-radius:6px;
+    background:#fff;
+    color:#243246;
+    font:inherit;
+    cursor:pointer;
+  }
+}
+@media print {
+  body { zoom:1!important; }
+  .app-zoom-control { display:none!important; }
+}

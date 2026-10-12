@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="官公庁提出用の工事写真表紙を作成する固定様式ページ">
+  <title>工事写真 表紙</title>
+  <link rel="stylesheet" href="cover.css?v=1.8.4">
+  <link rel="stylesheet" href="business-manager.css?v=1.4.0">
+  <link rel="stylesheet" href="app-dialog.css?v=1.0.0">
+  <link rel="stylesheet" href="zoom-control.css?v=1.0.0">
+  <link rel="stylesheet" href="office-export.css?v=1.1.0">
+  <link rel="stylesheet" href="sidebar.css?v=1.0.0">
+  <link rel="stylesheet" href="web-license-lock.css?v=1.0.0">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html"><span class="brand-mark">表</span><span>官公庁写真帳</span></a>
+  </header>
+  <nav class="actions right-sidebar" aria-label="操作">
+      <div id="businessSwitcher"></div>
+      <a class="button page-current" href="cover.html" aria-current="page">表紙ページ</a>
+      <a class="button" href="index.html">施工写真ページ</a>
+      <a class="button" href="completion.html">竣工写真ページ</a>
+      <div class="sidebar-divider" aria-hidden="true"></div>
+      <button id="saveButton" class="button" type="button">事業所JSON保存</button>
+      <label class="button file-button">事業所JSON読込<input id="loadInput" type="file" accept="application/json,.json" hidden></label>
+      <button id="printButton" class="button" type="button">印刷見本</button>
+      <div class="sidebar-divider" aria-hidden="true"></div>
+      <button id="resetButton" class="button danger-ghost" type="button">初期化</button>
+      <button id="resetAllButton" class="button danger-ghost" type="button">全ページ初期化</button>
+      <span class="save-status"><span class="save-indicator"></span><span id="saveStatus">この端末に自動保存します</span></span>
+  </nav>
+
+  <main class="shell">
+    <section class="cover-page editor-page">
+      <article class="cover-sheet">
+        <header class="cover-title-area">
+          <div class="cover-year"><input id="fiscalYear" class="cover-input" type="text" maxlength="30" aria-label="年度" placeholder="令和8年度"></div>
+          <div class="cover-main-title"><input id="coverTitle" class="cover-input" type="text" maxlength="30" aria-label="表題" placeholder="工事写真"></div>
+          <label class="cover-photographer"><span>撮影者名</span><input id="photographer" class="cover-input" type="text" maxlength="60" aria-label="撮影者名" placeholder="例：山田 太郎"></label>
+        </header>
+        <section class="cover-row work-number"><div class="cover-label">工事番号</div><div class="cover-value"><input id="workNumber" class="cover-input" type="text" maxlength="80" aria-label="工事番号" placeholder="例：令和8年度 第12号"></div></section>
+        <section class="cover-row work-name"><div class="cover-label">工事名</div><div class="cover-value"><textarea id="workName" class="cover-input" maxlength="140" aria-label="工事名" placeholder="例：○○庁舎 空調設備更新工事&#10;長い場合はEnterで改行"></textarea></div></section>
+        <section class="cover-row work-location"><div class="cover-label">施工箇所</div><div class="cover-value"><textarea id="workLocation" class="cover-input" maxlength="220" aria-label="施工箇所" placeholder="例：○○市○○町1丁目2番3号"></textarea></div></section>
+        <section class="cover-row contractor"><div class="cover-label">施工者</div><div class="cover-value">
+          <input id="contractorAddress" class="cover-input contractor-address" type="text" maxlength="160" aria-label="施工者住所" placeholder="住所">
+          <input id="contractorName" class="cover-input contractor-name" type="text" maxlength="120" aria-label="施工者会社名" placeholder="会社名">
+          <label class="contractor-representative"><span>代表者　</span><input id="representative" class="cover-input" type="text" maxlength="80" aria-label="代表者名" placeholder="名前"></label>
+        </div></section>
+        <section class="cover-row amount"><div class="cover-label">請負額</div><div class="cover-value"><input id="contractAmount" class="cover-input" type="text" maxlength="80" aria-label="請負額" placeholder="例：￥12,345,000－"></div></section>
+      </article>
+    </section>
+  </main>
+
+  <dialog id="confirmDialog">
+    <h2>表紙を初期化しますか？</h2>
+    <p>入力内容と、この端末に保存された表紙データを削除します。必要であれば先にJSON保存してください。</p>
+    <div class="dialog-actions"><button id="cancelReset" class="button" type="button">キャンセル</button><button id="confirmReset" class="button danger" type="button">初期化する</button></div>
+  </dialog>
+
+  <section id="previewPanel" class="preview-panel" hidden>
+    <header class="preview-toolbar"><div><b>A4表紙 印刷見本</b><span>PDFは正常なのに紙が空欄になる場合は、PDF側で「画像として印刷」を選んでください。</span></div><div><button id="closePreview" class="button" type="button">編集へ戻る</button><button id="doPrint" class="button primary" type="button">この内容を印刷</button></div></header>
+    <div id="printBook" class="print-book"></div>
+  </section>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="zoom-control.js?v=1.0.0"></script>
+  <script src="app-dialog.js?v=1.1.0"></script>
+  <script src="business-manager.js?v=1.3.0"></script>
+  <script src="reset-all.js?v=1.1.0"></script>
+  <script src="cover.js?v=1.4.0"></script>
+  <script src="office-export.js?v=1.4.1"></script>
+  <script src="web-license-lock.js?v=1.0.0"></script>
+</body>
+</html>

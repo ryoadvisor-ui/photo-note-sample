@@ -1,0 +1,20 @@
+.app-dialog {
+  width:min(460px,calc(100vw - 28px));
+  padding:0;
+  border:0;
+  border-radius:14px;
+  color:#172033;
+  background:#fff;
+  box-shadow:0 24px 80px rgba(13,25,42,.32);
+  font-family:"Yu Gothic UI","Meiryo",system-ui,sans-serif;
+}
+.app-dialog::backdrop { background:rgba(18,29,45,.54); backdrop-filter:blur(2px); }
+.app-dialog-form { padding:22px; }
+.app-dialog-title { margin:0 0 10px; font-size:19px; }
+.app-dialog-message { margin:0; color:#4c596b; font-size:14px; line-height:1.75; white-space:pre-wrap; }
+.app-dialog-input { width:100%; margin-top:15px; padding:10px 12px; border:1px solid #aeb9c7; border-radius:8px; outline:none; font:inherit; }
+.app-dialog-input:focus { border-color:#315f9b; box-shadow:0 0 0 3px rgba(49,95,155,.14); }
+.app-dialog-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:19px; }
+.app-dialog-button { min-width:84px; min-height:39px; padding:8px 14px; border:1px solid #c5cdd7; border-radius:8px; background:#fff; color:#263348; font:inherit; font-weight:800; cursor:pointer; }
+.app-dialog-button.primary { border-color:#315f9b; background:#315f9b; color:#fff; }
+.app-dialog-button.danger { border-color:#b3313c; background:#b3313c; color:#fff; }
